@@ -1,7 +1,14 @@
+buildscript {
+    dependencies {
+        classpath "gradle.plugin.com.github.johnrengelman:shadow:7.1.2"
+    }
+}
+
 plugins {
     id 'java'
     id 'jacoco'
     id 'java-library'
+    id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
 sourceSets {
@@ -44,6 +51,16 @@ dependencies {
     testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.26'
 }
 
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java'
+
+shadowJar {
+    mergeServiceFiles()
+    manifest {
+        attributes 'Main-Class': 'io.opentelemetry.contrib.generator.telemetry.cli.CLIProcessor'
+    }
+}
+
 test {
     useTestNG()
     finalizedBy jacocoTestReport
@@ -59,6 +76,11 @@ jacocoTestReport {
         xml.destination = file("${buildDir}/jacoco/test.xml")
         csv.enabled = false
     }
+}
+
+task getDeps(type: Copy) {
+  from sourceSets.main.runtimeClasspath
+  into 'runtime/'
 }
 
 task fatJar(type: Jar) {

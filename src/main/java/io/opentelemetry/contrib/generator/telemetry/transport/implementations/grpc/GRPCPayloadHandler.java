@@ -112,7 +112,7 @@ public class GRPCPayloadHandler implements PayloadHandler {
                 };
             }
         });
-        return channelBuilder.build();
+        return channelBuilder.usePlaintext().build();
     }
 
     protected String[] getHeadersPostData() {
